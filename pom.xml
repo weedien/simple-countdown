@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.4</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>cn.weedien</groupId>
+    <artifactId>simple-countdown</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <java.version>21</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.yitter</groupId>
+            <artifactId>yitter-idgenerator</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.26</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <!-- <executions> -->
+                <!--     <execution> -->
+                <!--         <id>build-native</id> -->
+                <!--         <goals> -->
+                <!--             <goal>compile-no-fork</goal> -->
+                <!--         </goals> -->
+                <!--         <phase>package</phase> -->
+                <!--     </execution> -->
+                <!-- </executions> -->
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <buildArgs>
+                        <!-- <buildArg>&#45;&#45;strict-image-heap</buildArg> -->
+                        <!-- <buildArg>-march=native</buildArg> -->
+                        <!-- <buildArg>-Ob</buildArg> -->
+                    </buildArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+            <!-- <plugin> -->
+            <!--     <groupId>com.ly.smart-doc</groupId> -->
+            <!--     <artifactId>smart-doc-maven-plugin</artifactId> -->
+            <!--     <version>3.0.3</version> -->
+            <!--     <configuration> -->
+            <!--         <includes> -->
+            <!--             &lt;!&ndash;格式为：groupId:artifactId;参考如下&ndash;&gt; -->
+            <!--             &lt;!&ndash;也可以支持正则式如：com.alibaba:.* &ndash;&gt; -->
+            <!--             <include>com.power.doc:.*</include> -->
+            <!--             &lt;!&ndash; <include>com.baomidou:mybatis-plus-extension</include> &ndash;&gt; -->
+            <!--             <include>com.ly.smart-doc:.*</include> -->
+            <!--             &lt;!&ndash; <include>org.springframework:spring-web</include> &ndash;&gt; -->
+            <!--         </includes> -->
+            <!--         &lt;!&ndash;指定生成文档的使用的配置文件&ndash;&gt; -->
+            <!--         <configFile>./src/main/resources/smart-doc.json</configFile> -->
+            <!--         &lt;!&ndash;指定项目名称&ndash;&gt; -->
+            <!--         <projectName>测试</projectName> -->
+            <!--     </configuration> -->
+            <!--     <executions> -->
+            <!--         <execution> -->
+            <!--             <goals> -->
+            <!--                 <goal>html</goal> -->
+            <!--             </goals> -->
+            <!--         </execution> -->
+            <!--     </executions> -->
+            <!-- </plugin> -->
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>tencent</id>
+            <url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+</project>
+
+

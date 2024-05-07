@@ -1,0 +1,17 @@
+server:
+  port: 8102
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://remote:3306/countdown
+    username: weedien
+    password: 031209
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+app:
+  query-code:
+    query-code-len: 6
+    code-retain-time: 60 # minutes
+    recycle-plan: "0 0 0 * * ?"
+logging:
+  config: classpath:logback-spring.xml

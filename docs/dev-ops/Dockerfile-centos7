@@ -1,0 +1,55 @@
+# 目的是为了在Windows WSL环境下将代码打包成Linux平台下的GraalVM Native Image
+# WSL本身的GLibc版本太高，服务器不支持
+# 构建时执行docker build --rm -t graalvm-opencloudos . --file docs/dev-ops/Dockerfile-centos7
+FROM centos:7
+ENV container docker
+# Enable systemd
+# deletes a number of unit files which might cause issues
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
+systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+rm -f /lib/systemd/system/multi-user.target.wants/*;\
+rm -f /etc/systemd/system/*.wants/*;\
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*;
+VOLUME [ "/sys/fs/cgroup" ]
+CMD ["/usr/sbin/init"]
+
+RUN yum update -y && yum install -y gcc zlib-devel curl bash
+# Support for Network
+# RUN yum -y install httpd; yum clean all; systemctl enable httpd.service
+# EXPOSE 80
+
+RUN cd /root
+# Install GraalVM
+RUN curl -4 -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o graalvm.tar.gz
+RUN tar -xzf graalvm.tar.gz
+RUN rm graalvm.tar.gz
+RUN export GRAALVM_NAME=$(find . -maxdepth 1 -type d -name "graalvm-jdk*" -printf "%f\n") && \
+	mv "${GRAALVM_NAME}" graalvm-jdk-21 && \
+	mv graalvm-jdk-21 /usr/local/
+ENV JAVA_HOME="/usr/local/graalvm-jdk-21"
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+# Install Maven
+RUN curl -4 -L https://repo.huaweicloud.com:8443/artifactory/apache-local/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz -o apache-maven-3.9.6-bin.tar.gz
+RUN tar -xzf apache-maven-3.9.6-bin.tar.gz
+RUN rm apache-maven-3.9.6-bin.tar.gz
+RUN mv apache-maven-3.9.6 /usr/local/apache-maven-3.9.6
+ENV PATH="/usr/local/apache-maven-3.9.6/bin:${PATH}"
+
+# Mirrors of Maven
+RUN mkdir -p /root/.m2 && \
+    echo '<?xml version="1.0" encoding="UTF-8"?>\
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">\
+    <mirrors>\
+        <mirror>\
+            <id>aliyunmaven</id>\
+            <mirrorOf>*</mirrorOf>\
+            <name>阿里云公共仓库</name>\
+            <url>https://maven.aliyun.com/repository/public</url>\
+        </mirror>\
+    </mirrors>\
+</settings>' > /root/.m2/settings.xml

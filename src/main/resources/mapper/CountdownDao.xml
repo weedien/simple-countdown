@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.weedien.countdown.dao.CountdownDao">
+    <resultMap id="countdownResultMap" type="cn.weedien.countdown.model.entity.Countdown">
+        <id property="id" column="id"/>
+        <result property="nid" column="nid"/>
+        <result property="queryCode" column="query_code"/>
+        <result property="expireAt" column="expire_at"/>
+        <result property="remark" column="remark"/>
+        <result property="message" column="message"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+
+    <sql id="selectColumns">
+        id, nid, query_code, expire_at, remark, message, created_at
+    </sql>
+
+    <select id="selectById" parameterType="long" resultMap="countdownResultMap">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM countdowns
+        WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="cn.weedien.countdown.model.entity.Countdown">
+        INSERT INTO countdowns (id, query_code, expire_at, remark, message, created_at, updated_at)
+        VALUES (#{id}, #{queryCode}, #{expireAt}, #{remark}, #{message}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="cn.weedien.countdown.model.entity.Countdown">
+        UPDATE countdowns
+        SET id = #{id},
+            query_code = #{queryCode},
+            expire_at = #{expireAt},
+            remark = #{remark},
+            message = #{message},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <update id="logicalDelete" parameterType="long">
+        UPDATE countdowns
+        SET deleted = 1
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectByQueryCode" parameterType="string" resultMap="countdownResultMap">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM countdowns
+        WHERE query_code = #{queryCode} AND deleted = 0
+    </select>
+
+    <select id="selectQueryCodeById" parameterType="long" resultType="string">
+        SELECT
+        query_code
+        FROM countdowns
+        WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="list" resultMap="countdownResultMap">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM countdowns
+        WHERE deleted = 0
+    </select>
+
+    <select id="listUnexpired" resultMap="countdownResultMap">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM countdowns
+        WHERE expire_at > now() AND deleted = 0
+    </select>
+
+    <select id="listExpiredQueryCodes" parameterType="java.util.Date" resultType="string">
+        SELECT
+        query_code
+        FROM countdowns
+        WHERE expire_at &lt; #{expireTime, jdbcType=TIMESTAMP}
+        AND deleted = 0
+    </select>
+
+    <select id="listValidQueryCodes" resultType="string">
+        SELECT
+        query_code
+        FROM countdowns
+        WHERE expire_at > now() AND deleted = 0
+    </select>
+</mapper>

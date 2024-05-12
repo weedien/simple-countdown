@@ -64,21 +64,19 @@
             <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
-                <!-- <executions> -->
-                <!--     <execution> -->
-                <!--         <id>build-native</id> -->
-                <!--         <goals> -->
-                <!--             <goal>compile-no-fork</goal> -->
-                <!--         </goals> -->
-                <!--         <phase>package</phase> -->
-                <!--     </execution> -->
-                <!-- </executions> -->
+                <executions>
+                    <execution>
+                        <id>build-native</id>
+                        <goals>
+                            <goal>compile-no-fork</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
                 <configuration>
                     <skipTests>true</skipTests>
                     <buildArgs>
-                        <!-- <buildArg>&#45;&#45;strict-image-heap</buildArg> -->
-                        <!-- <buildArg>-march=native</buildArg> -->
-                        <!-- <buildArg>-Ob</buildArg> -->
+                        {project.native.build-args}
                     </buildArgs>
                 </configuration>
             </plugin>
@@ -129,6 +127,26 @@
             <!-- </plugin> -->
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <project.native.build-args>-march=native -Ob --strict-image-heap</project.native.build-args>
+                <profileActive>prod</profileActive>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <project.native.build-args>-march=native --gc=G1 --strict-image-heap</project.native.build-args>
+                <profileActive>prod</profileActive>
+            </properties>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>

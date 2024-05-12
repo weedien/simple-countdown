@@ -1,5 +1,7 @@
 # 在运行构建之前需要先执行docker pull opencloudos/opencloudos:8.8
 # 构建时执行 docker build --rm -t graalvm-opencloudos . --file docs/dev-ops/Dockerfile-opencloudos
+# 运行容器 docker run -it -v /.../simple-countdown:/root/project graalvm-opencloudos bash
+# 编译native二进制 mvn clean package -Pnative
 FROM opencloudos/opencloudos:8.8
 
 RUN yum update -y && yum install -y gcc zlib-devel curl bash tar findutils
@@ -7,24 +9,23 @@ RUN yum update -y && yum install -y gcc zlib-devel curl bash tar findutils
 # RUN yum -y install httpd; yum clean all; systemctl enable httpd.service
 # EXPOSE 80
 
-# ENV PS1="\u@\h:\w\$"
+ENV PS1="\u@\h:\w\$"
 
-RUN cd /root
 # Install GraalVM
-RUN curl -4 -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o graalvm.tar.gz
-RUN tar -xzf graalvm.tar.gz
-RUN rm graalvm.tar.gz
-RUN export GRAALVM_NAME=$(find . -maxdepth 1 -type d -name "graalvm-jdk*" -printf "%f\n") && \
+RUN curl -4 -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o graalvm.tar.gz && \
+    tar -xzf graalvm.tar.gz && \
+    rm graalvm.tar.gz && \
+    export GRAALVM_NAME=$(find . -maxdepth 1 -type d -name "graalvm-jdk*" -printf "%f\n") && \
 	mv "${GRAALVM_NAME}" graalvm-jdk-21 && \
 	mv graalvm-jdk-21 /usr/local/
 ENV JAVA_HOME="/usr/local/graalvm-jdk-21"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 # Install Maven
-RUN curl -4 -L https://repo.huaweicloud.com:8443/artifactory/apache-local/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz -o apache-maven-3.9.6-bin.tar.gz
-RUN tar -xzf apache-maven-3.9.6-bin.tar.gz
-RUN rm apache-maven-3.9.6-bin.tar.gz
-RUN mv apache-maven-3.9.6 /usr/local/apache-maven-3.9.6
+RUN curl -4 -L https://repo.huaweicloud.com:8443/artifactory/apache-local/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz -o apache-maven-3.9.6-bin.tar.gz && \
+    tar -xzf apache-maven-3.9.6-bin.tar.gz && \
+    rm apache-maven-3.9.6-bin.tar.gz && \
+    mv apache-maven-3.9.6 /usr/local/apache-maven-3.9.6
 ENV PATH="/usr/local/apache-maven-3.9.6/bin:${PATH}"
 
 # Mirrors of Maven

@@ -4,7 +4,7 @@
 # 编译native二进制 mvn clean package -Pnative
 FROM opencloudos/opencloudos:8.8
 
-RUN yum update -y && yum install -y gcc zlib-devel curl bash tar findutils
+RUN yum update -y && yum install --enablerepo="*" -y gcc zlib-devel curl bash tar findutils libstdc++-static
 # Support for Network
 # RUN yum -y install httpd; yum clean all; systemctl enable httpd.service
 # EXPOSE 80

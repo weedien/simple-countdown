@@ -75,8 +75,9 @@
                 </executions>
                 <configuration>
                     <skipTests>true</skipTests>
+                    <!--suppress UnresolvedMavenProperty -->
                     <buildArgs>
-                        {project.native.build-args}
+                        ${project.native.build-args} ${env.NATIVE_BUILD_ARGS}
                     </buildArgs>
                 </configuration>
             </plugin>
@@ -99,32 +100,6 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
-            <!-- <plugin> -->
-            <!--     <groupId>com.ly.smart-doc</groupId> -->
-            <!--     <artifactId>smart-doc-maven-plugin</artifactId> -->
-            <!--     <version>3.0.3</version> -->
-            <!--     <configuration> -->
-            <!--         <includes> -->
-            <!--             &lt;!&ndash;格式为：groupId:artifactId;参考如下&ndash;&gt; -->
-            <!--             &lt;!&ndash;也可以支持正则式如：com.alibaba:.* &ndash;&gt; -->
-            <!--             <include>com.power.doc:.*</include> -->
-            <!--             &lt;!&ndash; <include>com.baomidou:mybatis-plus-extension</include> &ndash;&gt; -->
-            <!--             <include>com.ly.smart-doc:.*</include> -->
-            <!--             &lt;!&ndash; <include>org.springframework:spring-web</include> &ndash;&gt; -->
-            <!--         </includes> -->
-            <!--         &lt;!&ndash;指定生成文档的使用的配置文件&ndash;&gt; -->
-            <!--         <configFile>./src/main/resources/smart-doc.json</configFile> -->
-            <!--         &lt;!&ndash;指定项目名称&ndash;&gt; -->
-            <!--         <projectName>测试</projectName> -->
-            <!--     </configuration> -->
-            <!--     <executions> -->
-            <!--         <execution> -->
-            <!--             <goals> -->
-            <!--                 <goal>html</goal> -->
-            <!--             </goals> -->
-            <!--         </execution> -->
-            <!--     </executions> -->
-            <!-- </plugin> -->
         </plugins>
     </build>
 
@@ -142,7 +117,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <project.native.build-args>-march=native --gc=G1 --strict-image-heap</project.native.build-args>
+                <project.native.build-args>-march=native --gc=G1 --strict-image-heap -J-Xmx4g</project.native.build-args>
                 <profileActive>prod</profileActive>
             </properties>
         </profile>

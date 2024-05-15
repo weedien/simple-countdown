@@ -2,8 +2,8 @@ package cn.weedien.countdown.common.log;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.TimeInterval;
-import cn.hutool.json.JSONUtil;
-import cn.weedien.countdown.uitl.HttpContextUtil;
+import cn.weedien.countdown.common.exception.BusinessException;
+import cn.weedien.countdown.util.HttpContextUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +38,7 @@ public class GlobalLogAspect extends BaseAspectSupport {
     @Around("log()")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        LogSubject logSubject = new LogSubject();
+        LogSubject logSubject = new LogSubject(active);
         // 记录时间定时器
         TimeInterval timer = DateUtil.timer(true);
 
@@ -48,29 +49,34 @@ public class GlobalLogAspect extends BaseAspectSupport {
         try {
             result = joinPoint.proceed();
         } catch (Throwable e) {
+            // 需要保证所有经过Controller处理的异常都是BusinessException
+            // 因为这部分异常是需要记录业务处理时间的，而其他异常大概率为请求参数异常，没有经过业务代码处理，无需记录处理时间
+            RuntimeException ex;
+            if (e instanceof BusinessException businessException) {
+                logSubject.setCode(businessException.getCode().value());
+                ex = businessException;
+            } else {
+                logSubject.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                ex = new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+
             logSubject.setMessage(e.getMessage());
             // 执行消耗时间
             String endTime = timer.intervalPretty();
             logSubject.setSpendTime(endTime);
 
-            String jsonLog = JSONUtil.toJsonPrettyStr(logSubject);
+            String jsonLog = logSubject.toString();
             log.error(jsonLog);
 
-            throw e;
+            throw ex;
         }
-
+        logSubject.setCode(HttpStatus.OK.value());
         logSubject.setResult(result);
         // 执行消耗时间
         String endTime = timer.intervalPretty();
         logSubject.setSpendTime(endTime);
 
-        if ("prod".equals(active)) {
-            String jsonLog = JSONUtil.toJsonStr(logSubject);
-            log.info(jsonLog);
-            return result;
-        }
-        // 测试环境下格式化输出
-        String jsonLog = JSONUtil.toJsonPrettyStr(logSubject);
+        String jsonLog = logSubject.toString();
         log.info(jsonLog);
         return result;
     }
@@ -120,7 +126,7 @@ public class GlobalLogAspect extends BaseAspectSupport {
         if (argList.isEmpty()) {
             return null;
         } else if (argList.size() == 1) {
-            return argList.get(0);
+            return argList.getFirst();
         } else {
             return argList;
         }

@@ -1,4 +1,4 @@
-package cn.weedien.countdown.uitl;
+package cn.weedien.countdown.util;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;

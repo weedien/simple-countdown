@@ -6,7 +6,7 @@ import cn.weedien.countdown.model.req.CountdownCommand;
 import cn.weedien.countdown.model.resp.CountdownQueryRespDTO;
 import cn.weedien.countdown.model.resp.CountdownRespDTO;
 import cn.weedien.countdown.service.CountdownService;
-import cn.weedien.countdown.uitl.Results;
+import cn.weedien.countdown.util.Results;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 

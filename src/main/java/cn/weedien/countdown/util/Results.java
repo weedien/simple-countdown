@@ -1,4 +1,4 @@
-package cn.weedien.countdown.uitl;
+package cn.weedien.countdown.util;
 
 import cn.weedien.countdown.model.Result;
 import org.springframework.http.HttpStatus;

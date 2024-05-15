@@ -1,15 +1,15 @@
 package cn.weedien.countdown.service.impl;
 
 import cn.weedien.countdown.dao.CountdownDao;
-import cn.weedien.countdown.common.exception.CustomException;
+import cn.weedien.countdown.common.exception.BusinessException;
 import cn.weedien.countdown.model.entity.Countdown;
 import cn.weedien.countdown.model.req.CountdownCommand;
 import cn.weedien.countdown.model.resp.CountdownQueryRespDTO;
 import cn.weedien.countdown.model.resp.CountdownRespDTO;
 import cn.weedien.countdown.service.CountdownService;
 import cn.weedien.countdown.service.QueryCodeService;
-import cn.weedien.countdown.uitl.CustomIdGenerator;
-import cn.weedien.countdown.uitl.DurationUtil;
+import cn.weedien.countdown.util.CustomIdGenerator;
+import cn.weedien.countdown.util.DurationUtil;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -69,7 +69,7 @@ public class CountdownServiceImpl implements CountdownService {
     public CountdownQueryRespDTO getById(long id) {
         Countdown countdown = countdownDao.selectById(id);
         if (countdown == null) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "Countdown not found");
+            throw new BusinessException(HttpStatus.NOT_FOUND, "Countdown not found");
         }
 
         CountdownQueryRespDTO resp = new CountdownQueryRespDTO();
@@ -100,11 +100,11 @@ public class CountdownServiceImpl implements CountdownService {
     @Override
     public CountdownQueryRespDTO getByQueryCode(String queryCode) {
         if (!queryCodeService.isValidQueryCode(queryCode)) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "Query code not exists");
+            throw new BusinessException(HttpStatus.NOT_FOUND, "Query code not exists");
         }
         Countdown countdown = countdownDao.selectByQueryCode(queryCode);
         if (countdown == null) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "Countdown not found");
+            throw new BusinessException(HttpStatus.NOT_FOUND, "Countdown not found");
         }
 
         CountdownQueryRespDTO resp = new CountdownQueryRespDTO();

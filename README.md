@@ -12,4 +12,4 @@
 
 ![image-20240513111838882](https://picgo-1314385327.cos.ap-guangzhou.myqcloud.com/markdown/2024/05/13/20240513111840.png)
 
-上面是分别采用SerialGC和G1GC的测试结果，在内存使用上，G1GC初始内存占用高于SerialGC大约1/3，在面对大流量的时候，G1GC有着更稳定的内存占用，维持在280M，而SerialGC会达到400M，CPU利用率基本上一致。
+上面是分别采用SerialGC和G1GC的测试结果，在内存使用上，G1GC初始内存占用高于SerialGC大约1/3，在面对大流量的时候，G1GC有着更稳定的内存占用，维持在280M，而SerialGC会达到400M，这个内存占用状态会在请求都结束后保存一段时间，所以并发较高（200以上）时最好采用G1GC，内存消耗更少，用户量少时SerialGC可以带来更低的内存占用。

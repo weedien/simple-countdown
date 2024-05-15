@@ -1,7 +1,7 @@
 package cn.weedien.countdown;
 
 import cn.weedien.countdown.dao.CountdownDao;
-import cn.weedien.countdown.uitl.CustomIdGenerator;
+import cn.weedien.countdown.util.CustomIdGenerator;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

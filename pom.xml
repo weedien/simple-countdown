@@ -41,7 +41,6 @@
             <artifactId>hutool-all</artifactId>
             <version>5.8.26</version>
         </dependency>
-
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -75,9 +74,9 @@
                 </executions>
                 <configuration>
                     <skipTests>true</skipTests>
-                    <!--suppress UnresolvedMavenProperty -->
+                    <mainClass>cn.weedien.countdown.CountdownApplication</mainClass>
                     <buildArgs>
-                        ${project.native.build-args} ${env.NATIVE_BUILD_ARGS}
+                        ${project.native.build-args}
                     </buildArgs>
                 </configuration>
             </plugin>
@@ -106,18 +105,22 @@
     <profiles>
         <profile>
             <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
-                <project.native.build-args>-march=native -Ob --strict-image-heap</project.native.build-args>
+                <project.native.build-args>
+                    -march=native -Ob --strict-image-heap
+                </project.native.build-args>
                 <profileActive>prod</profileActive>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
-                <project.native.build-args>-march=native --gc=G1 --strict-image-heap -J-Xmx4g</project.native.build-args>
+                <project.native.build-args>
+                    -march=native --gc=G1 --strict-image-heap -J-Xmx4g
+                </project.native.build-args>
                 <profileActive>prod</profileActive>
             </properties>
         </profile>

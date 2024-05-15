@@ -1,4 +1,4 @@
-package cn.weedien.countdown.uitl;
+package cn.weedien.countdown.util;
 
 import com.github.yitter.contract.IdGeneratorOptions;
 import com.github.yitter.idgen.YitIdHelper;

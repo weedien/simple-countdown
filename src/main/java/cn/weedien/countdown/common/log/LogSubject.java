@@ -1,9 +1,19 @@
 package cn.weedien.countdown.common.log;
 
-import lombok.Data;
+import cn.hutool.json.JSONUtil;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class LogSubject {
+
+    private transient String mode;
+
+    public LogSubject(String mode) {
+        this.mode = mode;
+    }
+
     /**
      * 操作描述
      */
@@ -50,6 +60,11 @@ public class LogSubject {
     private Object result;
 
     /**
+     * 状态码
+     */
+    private int code;
+
+    /**
      * 异常信息
      */
     private String message;
@@ -59,5 +74,11 @@ public class LogSubject {
      */
     private String device;
 
-
+    @Override
+    public String toString() {
+        if (mode.equals("prod")) {
+            JSONUtil.toJsonStr(this);
+        }
+        return JSONUtil.toJsonPrettyStr(this);
+    }
 }
